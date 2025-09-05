@@ -17,6 +17,7 @@ const navigation = [
   { name: "Home", href: "/" },
   { name: "About", href: "/about" },
   { name: "Services", href: "/services" },
+  { name: "Blog", href: "/blog" },
   { name: "Contact", href: "/contact" },
 ];
 
@@ -46,7 +47,11 @@ export default function Navbar() {
           {/* Logo */}
           <Link
             href="/"
-            className="flex-shrink-0 text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors"
+            className={`flex-shrink-0 text-2xl font-bold transition-colors ${
+              isScrolled
+                ? "text-blue-600 hover:text-blue-700"
+                : "text-white hover:text-blue-100"
+            }`}
           >
             HR Solutions
           </Link>

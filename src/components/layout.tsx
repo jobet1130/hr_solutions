@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"] });
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className={`${inter.className} antialiased min-h-screen bg-white text-black`}
+      className={`antialiased min-h-screen bg-white text-black ${inter.className}`}
     >
       <Navbar />
       <main className="flex-1">{children}</main>
