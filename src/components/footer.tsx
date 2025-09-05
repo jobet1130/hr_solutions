@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Facebook, Twitter, Linkedin, Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
+import { FaFacebookF, FaTwitter, FaLinkedinIn } from "react-icons/fa";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -22,21 +23,21 @@ export default function Footer() {
                 className="text-gray-400 hover:text-blue-400 transition-colors"
                 aria-label="Facebook"
               >
-                <Facebook className="h-5 w-5" />
+                <FaFacebookF className="h-5 w-5" />
               </Link>
               <Link
                 href="https://twitter.com"
                 className="text-gray-400 hover:text-blue-400 transition-colors"
                 aria-label="Twitter"
               >
-                <Twitter className="h-5 w-5" />
+                <FaTwitter className="h-5 w-5" />
               </Link>
               <Link
                 href="https://linkedin.com"
                 className="text-gray-400 hover:text-blue-400 transition-colors"
                 aria-label="LinkedIn"
               >
-                <Linkedin className="h-5 w-5" />
+                <FaLinkedinIn className="h-5 w-5" />
               </Link>
             </div>
           </div>
