@@ -8,75 +8,76 @@ import { Button } from "../components/ui/button";
 import Link from "next/link";
 import { Users, DollarSign, GraduationCap, ArrowRight } from "lucide-react";
 
+// ✅ move data arrays OUTSIDE the component
+const services = [
+  {
+    title: "Recruitment & Staffing",
+    description:
+      "Find the perfect talent for your organization with our comprehensive recruitment solutions.",
+    icon: Users,
+    features: [
+      "Executive search and placement",
+      "Candidate screening and interviews",
+      "Background verification",
+      "Onboarding support",
+    ],
+  },
+  {
+    title: "Payroll & Benefits",
+    description:
+      "Streamline payroll processing and benefits administration with our automated systems.",
+    icon: DollarSign,
+    features: [
+      "Automated payroll processing",
+      "Tax compliance and filing",
+      "Benefits administration",
+      "Direct deposit and pay cards",
+    ],
+  },
+  {
+    title: "Training & Development",
+    description:
+      "Enhance employee skills and performance with our tailored training programs.",
+    icon: GraduationCap,
+    features: [
+      "Leadership development programs",
+      "Skills assessment and training",
+      "Performance management systems",
+      "Learning management platform",
+    ],
+  },
+];
+
+const stats = [
+  {
+    number: "10+",
+    label: "Years Experience",
+    description: "Delivering excellence",
+  },
+  {
+    number: "500+",
+    label: "Clients Served",
+    description: "Across industries",
+  },
+  {
+    number: "100%",
+    label: "Compliance Rate",
+    description: "Error-free processes",
+  },
+  {
+    number: "24/7",
+    label: "Support Available",
+    description: "When you need us",
+  },
+];
+
 export default function HomePage() {
-  const services = [
-    {
-      title: "Recruitment & Staffing",
-      description:
-        "Find the perfect talent for your organization with our comprehensive recruitment solutions.",
-      icon: Users,
-      features: [
-        "Executive search and placement",
-        "Candidate screening and interviews",
-        "Background verification",
-        "Onboarding support",
-      ],
-    },
-    {
-      title: "Payroll & Benefits",
-      description:
-        "Streamline payroll processing and benefits administration with our automated systems.",
-      icon: DollarSign,
-      features: [
-        "Automated payroll processing",
-        "Tax compliance and filing",
-        "Benefits administration",
-        "Direct deposit and pay cards",
-      ],
-    },
-    {
-      title: "Training & Development",
-      description:
-        "Enhance employee skills and performance with our tailored training programs.",
-      icon: GraduationCap,
-      features: [
-        "Leadership development programs",
-        "Skills assessment and training",
-        "Performance management systems",
-        "Learning management platform",
-      ],
-    },
-  ];
-
-  const stats = [
-    {
-      number: "10+",
-      label: "Years Experience",
-      description: "Delivering excellence",
-    },
-    {
-      number: "500+",
-      label: "Clients Served",
-      description: "Across industries",
-    },
-    {
-      number: "100%",
-      label: "Compliance Rate",
-      description: "Error-free processes",
-    },
-    {
-      number: "24/7",
-      label: "Support Available",
-      description: "When you need us",
-    },
-  ];
-
   return (
     <Layout>
-      {/* Hero Section */}
+      {/* ✅ Hero Section */}
       <Hero />
 
-      {/* Services Section */}
+      {/* ✅ Services Section */}
       <section className="py-16 sm:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -122,7 +123,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Why Choose Us Section */}
+      {/* ✅ Why Choose Us Section */}
       <section className="py-16 sm:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -159,7 +160,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* ✅ CTA Section */}
       <section className="py-16 sm:py-20 bg-blue-600">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">

@@ -9,6 +9,7 @@ import {
   SheetContent,
   SheetTrigger,
   SheetClose,
+  SheetTitle,
 } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 
@@ -35,7 +36,9 @@ export default function Navbar() {
   return (
     <nav
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled ? "bg-white/95 backdrop-blur-sm shadow-md" : "bg-transparent"
+        isScrolled
+          ? "bg-white/80 backdrop-blur-md shadow-lg"
+          : "bg-white/30 backdrop-blur-md"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -76,7 +79,11 @@ export default function Navbar() {
                 <span className="sr-only">Open menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px]">
+            <SheetContent
+              side="right"
+              className="w-[300px] bg-white/80 backdrop-blur-md"
+            >
+              <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
               <div className="flex items-center justify-between mb-8">
                 <div className="text-xl font-bold text-blue-600">
                   HR Solutions
@@ -90,8 +97,8 @@ export default function Navbar() {
                       href={item.href}
                       className={`px-3 py-2 text-lg font-medium transition-colors rounded-md ${
                         pathname === item.href
-                          ? "text-blue-600 bg-blue-50"
-                          : "text-gray-700 hover:text-blue-600 hover:bg-blue-50/50"
+                          ? "text-blue-600 bg-blue-50/80"
+                          : "text-gray-700 hover:text-blue-600 hover:bg-blue-50/40"
                       }`}
                     >
                       {item.name}
