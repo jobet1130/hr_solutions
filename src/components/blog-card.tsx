@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import {
   Card,
@@ -12,7 +14,13 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, Clock, User, ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
+
+// Dynamically import motion to avoid SSR issues
+const motion = {
+  div: dynamic(() => import("framer-motion").then((mod) => mod.motion.div), {
+    ssr: false,
+  }),
+};
 
 interface BlogPost {
   id: string;
@@ -35,14 +43,31 @@ interface BlogCardProps {
 }
 
 export default function BlogCard({ post, index = 0 }: BlogCardProps) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const MotionDiv = motion.div;
+
+  // Only render motion animations on the client side
+  const motionProps = isMounted
+    ? {
+        initial: { opacity: 0, y: 20 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.5, delay: index * 0.1 },
+        whileHover: { y: -5 },
+      }
+    : {
+        initial: { opacity: 1, y: 0 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0 },
+        whileHover: {},
+      };
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      whileHover={{ y: -5 }}
-      className="h-full"
-    >
+    <MotionDiv {...motionProps} className="h-full">
       <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md h-full flex flex-col">
         <CardHeader className="pb-4 flex-none">
           <div className="flex items-center justify-between mb-3">
@@ -50,14 +75,9 @@ export default function BlogCard({ post, index = 0 }: BlogCardProps) {
               {post.category}
             </Badge>
             {post.featured && (
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Badge className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-900">
-                  Featured
-                </Badge>
-              </motion.div>
+              <Badge className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-900">
+                Featured
+              </Badge>
             )}
           </div>
           <CardTitle className="text-xl group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight">
@@ -94,28 +114,20 @@ export default function BlogCard({ post, index = 0 }: BlogCardProps) {
 
         <CardFooter className="pt-0 flex-none">
           <Link href={`/blog/${post.slug}`} className="w-full">
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full"
+            <Button
+              className="w-full transition-all duration-300 group"
+              variant={post.featured ? "default" : "outline"}
             >
-              <Button
-                className="w-full transition-all duration-300"
-                variant={post.featured ? "default" : "outline"}
+              <span>Read Article</span>
+              <span
+                className={`ml-2 inline-block transition-transform duration-200 ${isMounted ? "group-hover:translate-x-1" : ""}`}
               >
-                <span>Read Article</span>
-                <motion.div
-                  className="ml-2"
-                  whileHover={{ x: 3 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <ArrowRight className="h-4 w-4" />
-                </motion.div>
-              </Button>
-            </motion.div>
+                <ArrowRight className="h-4 w-4" />
+              </span>
+            </Button>
           </Link>
         </CardFooter>
       </Card>
-    </motion.div>
+    </MotionDiv>
   );
 }

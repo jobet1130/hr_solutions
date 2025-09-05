@@ -1,9 +1,11 @@
-import type { Metadata } from "next";
+import { Metadata } from "next";
 import Layout from "@/components/layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getAllPosts } from "@/lib/markdown";
+import { getAllPosts, type BlogPost } from "@/lib/markdown";
 import BlogCard from "@/components/blog-card";
+import Link from "next/link";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "HR Insights & Expert Advice | Blog",
@@ -26,10 +28,42 @@ const categories = [
   "Retention",
 ];
 
-export default async function BlogPage() {
+function filterPostsByCategory(posts: BlogPost[], category: string) {
+  if (category === "All") return posts;
+  return posts.filter(
+    (post) => post.category.toLowerCase() === category.toLowerCase(),
+  );
+}
+
+const POSTS_PER_PAGE = 3;
+
+export default async function BlogPage({
+  searchParams,
+}: {
+  searchParams: {
+    category?: string;
+    page?: string;
+  };
+}) {
+  const selectedCategory = searchParams.category || "All";
+  const currentPage = Number(searchParams.page) || 1;
+
   const blogPosts = await getAllPosts();
-  const featuredPosts = blogPosts.filter((post) => post.featured);
-  const regularPosts = blogPosts.filter((post) => !post.featured);
+  const filteredPosts = filterPostsByCategory(blogPosts, selectedCategory);
+
+  // Combine all posts (featured first, then regular)
+  const allPosts = [
+    ...filteredPosts.filter((post) => post.featured),
+    ...filteredPosts.filter((post) => !post.featured),
+  ];
+
+  // Pagination logic
+  const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+  const paginatedPosts = allPosts.slice(
+    startIndex,
+    startIndex + POSTS_PER_PAGE,
+  );
 
   return (
     <Layout>
@@ -47,13 +81,20 @@ export default async function BlogPage() {
               </p>
               <div className="flex flex-wrap justify-center gap-2">
                 {categories.map((category) => (
-                  <Badge
+                  <Link
                     key={category}
-                    variant={category === "All" ? "default" : "secondary"}
-                    className="px-4 py-2 text-sm hover:bg-white hover:text-blue-600 transition-colors cursor-pointer"
+                    href={`/blog${category === "All" ? "" : `?category=${encodeURIComponent(category)}`}`}
+                    scroll={false}
                   >
-                    {category}
-                  </Badge>
+                    <Badge
+                      variant={
+                        category === selectedCategory ? "default" : "secondary"
+                      }
+                      className="px-4 py-2 text-sm hover:bg-white hover:text-blue-600 transition-colors cursor-pointer"
+                    >
+                      {category}
+                    </Badge>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -62,30 +103,7 @@ export default async function BlogPage() {
 
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          {/* Featured Posts */}
-          <div
-            className="mb-16 relative rounded-3xl p-8 overflow-hidden"
-            style={{
-              backgroundImage:
-                "url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          >
-            <div className="absolute inset-0 bg-white bg-opacity-90"></div>
-            <div className="relative z-10">
-              <h2 className="text-3xl font-bold text-gray-900 mb-8">
-                Featured Articles
-              </h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {featuredPosts.map((post, index) => (
-                  <BlogCard key={post.id} post={post} index={index} />
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Regular Posts */}
+          {/* All Posts */}
           <div
             className="relative rounded-3xl p-8 overflow-hidden"
             style={{
@@ -97,18 +115,68 @@ export default async function BlogPage() {
           >
             <div className="absolute inset-0 bg-white bg-opacity-85"></div>
             <div className="relative z-10">
-              <h2 className="text-3xl font-bold text-gray-900 mb-8">
-                Latest Articles
-              </h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {regularPosts.map((post, index) => (
-                  <BlogCard
-                    key={post.id}
-                    post={post}
-                    index={index + featuredPosts.length}
-                  />
-                ))}
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="text-3xl font-bold text-gray-900">
+                  {selectedCategory === "All"
+                    ? "Latest Articles"
+                    : selectedCategory}
+                </h2>
+                {totalPages > 1 && (
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      disabled={currentPage === 1}
+                      asChild
+                    >
+                      <Link
+                        href={`/blog?category=${encodeURIComponent(selectedCategory)}&page=${currentPage - 1}`}
+                        scroll={false}
+                        aria-label="Previous page"
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                    <span className="text-sm text-gray-600">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      disabled={currentPage >= totalPages}
+                      asChild
+                    >
+                      <Link
+                        href={`/blog?category=${encodeURIComponent(selectedCategory)}&page=${currentPage + 1}`}
+                        scroll={false}
+                        aria-label="Next page"
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </div>
+                )}
               </div>
+              {paginatedPosts.length > 0 ? (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {paginatedPosts.map((post, index) => (
+                    <BlogCard
+                      key={post.id}
+                      post={post}
+                      index={index + (currentPage - 1) * POSTS_PER_PAGE}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <h3 className="text-xl font-semibold text-gray-700">
+                    No more posts found
+                  </h3>
+                  <p className="mt-2 text-gray-500">
+                    You&apos;ve reached the end of the list
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
